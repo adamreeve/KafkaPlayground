@@ -1,8 +1,12 @@
+from __future__ import annotations
+
 import logging
 import time
 import threading
+from typing import TYPE_CHECKING
 
-from .data import ProducerConsumerData
+if TYPE_CHECKING:
+    from kafka_tool.data import ProducerConsumerData
 
 
 log = logging.getLogger(__name__)

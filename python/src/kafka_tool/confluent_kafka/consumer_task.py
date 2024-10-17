@@ -1,14 +1,18 @@
+from __future__ import annotations
+
 import logging
 import threading
-from typing import Dict
+from typing import Dict, TYPE_CHECKING
 import uuid
 
-from confluent_kafka import Consumer, Message, TopicPartition
+from confluent_kafka import Consumer, TopicPartition
 
-from .data import ProducerConsumerData
-from .settings import ProducerConsumerSettings
-from .utils import get_topic_name
+from kafka_tool.utils import get_topic_name
 
+if TYPE_CHECKING:
+    from confluent_kafka import Message
+    from kafka_tool.data import ProducerConsumerData
+    from kafka_tool.settings import ProducerConsumerSettings
 
 log = logging.getLogger(__name__)
 

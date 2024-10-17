@@ -1,14 +1,18 @@
+from __future__ import annotations
+
 import logging
 import time
 import threading
-from typing import Dict
+from typing import Dict, TYPE_CHECKING
 
 from confluent_kafka import Producer, KafkaError
 
-from .data import ProducerConsumerData
-from .settings import ProducerConsumerSettings
-from .utils import get_admin_client, get_topic_name
+from kafka_tool.confluent_kafka.admin import get_admin_client
+from kafka_tool.utils import get_topic_name
 
+if TYPE_CHECKING:
+    from kafka_tool.data import ProducerConsumerData
+    from kafka_tool.settings import ProducerConsumerSettings
 
 log = logging.getLogger(__name__)
 

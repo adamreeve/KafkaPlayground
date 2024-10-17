@@ -4,12 +4,12 @@ import argparse
 import logging
 from typing import Dict
 
-import confluent_kafka
-
-from .consumer import run_consumer
-from .producer import run_producer
-from .producer_consumer import run_producer_consumer
-from .settings import ProducerConsumerSettings
+from kafka_tool.confluent_kafka import ConfluentKafkaTasks
+from kafka_tool.consumer import run_consumer
+from kafka_tool.kafka_python import KafkaPythonTasks
+from kafka_tool.producer import run_producer
+from kafka_tool.producer_consumer import run_producer_consumer
+from kafka_tool.settings import ProducerConsumerSettings
 
 
 log = logging.getLogger(__name__)
@@ -22,6 +22,10 @@ def main():
     arg_parser.add_argument(
         "command",
         choices=["producer", "consumer", "producer-consumer"])
+    arg_parser.add_argument(
+        "--library", "-l",
+        choices=["confluent-kafka", "kafka-python"],
+        default="confluent-kafka")
     arg_parser.add_argument(
         "--config", "-c",
         dest='config',
@@ -76,7 +80,7 @@ def main():
 
     args = arg_parser.parse_args()
 
-    config: Dict[str, str] = args.config
+    config: Dict[str, str] = args.config or {}
     settings = ProducerConsumerSettings(
         producers=args.producers,
         topics=args.topics,
@@ -91,13 +95,24 @@ def main():
 
     logging.basicConfig(level=logging.INFO)
 
-    log.info("confluent_kafka version = %s", confluent_kafka.__version__)
+    if args.library == "confluent-kafka":
+        import confluent_kafka
+        log.info("confluent_kafka version = %s", confluent_kafka.__version__)
+
+        tasks = ConfluentKafkaTasks
+    elif args.library == "kafka-python":
+        import kafka
+        log.info("kafka-python version = %s", kafka.__version__)
+
+        tasks = KafkaPythonTasks
+    else:
+        raise ValueError(f"Invalid library: {args.library}")
 
     {
         'producer': run_producer,
         'consumer': run_consumer,
         'producer-consumer': run_producer_consumer,
-    }[args.command](config, settings)
+    }[args.command](tasks, config, settings)
 
 
 class StoreConfigEntry(argparse.Action):
