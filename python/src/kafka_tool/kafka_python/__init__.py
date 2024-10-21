@@ -6,6 +6,7 @@ from typing import Dict, TYPE_CHECKING
 from kafka_tool.kafka_tasks import KafkaTasks
 from kafka_tool.kafka_python.admin import recreate_topics
 from kafka_tool.kafka_python.consumer_task import run_consumer_task
+from kafka_tool.kafka_python.producer_task import run_producer_task
 
 if TYPE_CHECKING:
     from kafka_tool import ProducerConsumerSettings
@@ -32,4 +33,4 @@ class KafkaPythonTasks(KafkaTasks):
             data: ProducerConsumerData,
             producer_index: int,
             shutdown: threading.Event):
-        raise NotImplementedError()
+        run_producer_task(config, settings, data, producer_index, shutdown)

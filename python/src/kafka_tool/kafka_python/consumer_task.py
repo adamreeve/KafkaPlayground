@@ -35,7 +35,7 @@ def run_consumer_task(
         'auto_offset_reset': 'error',
         'enable_auto_commit': False,
     }
-    consumer_kwargs.update(config_to_kwargs(config))
+    consumer_kwargs.update(config_to_kwargs(config, 'consumer'))
 
     consumer = KafkaConsumer(
         group_id=group_id,

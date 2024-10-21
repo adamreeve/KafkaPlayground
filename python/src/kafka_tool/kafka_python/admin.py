@@ -18,7 +18,7 @@ log = logging.getLogger(__name__)
 
 
 def get_admin_client(config: Dict[str, str]):
-    return KafkaAdminClient(**config_to_kwargs(config))
+    return KafkaAdminClient(**config_to_kwargs(config, 'consumer'))
 
 
 def recreate_topics(config: Dict[str, str], settings: ProducerConsumerSettings):
