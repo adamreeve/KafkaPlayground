@@ -2,13 +2,14 @@ from __future__ import annotations
 
 import logging
 import threading
-from typing import Any, Dict, TYPE_CHECKING
+from typing import Dict, TYPE_CHECKING
 import uuid
 
 from kafka import KafkaConsumer, TopicPartition
 from kafka.consumer.fetcher import ConsumerRecord
 
 from kafka_tool.utils import get_topic_name
+from kafka_tool.kafka_python.config import config_to_kwargs
 
 if TYPE_CHECKING:
     from kafka_tool.data import ProducerConsumerData
@@ -34,7 +35,7 @@ def run_consumer_task(
         'auto_offset_reset': 'error',
         'enable_auto_commit': False,
     }
-    consumer_kwargs.update(_config_to_consumer_args(config))
+    consumer_kwargs.update(config_to_kwargs(config))
 
     consumer = KafkaConsumer(
         group_id=group_id,
@@ -78,18 +79,3 @@ def run_consumer_task(
                     break
     finally:
         consumer.close()
-
-
-def _config_to_consumer_args(config: Dict[str, str]) -> Dict[str, Any]:
-    consumer_kwargs = {}
-    for (config_key, arg, converter) in [
-        ('bootstrap.servers', 'bootstrap_servers', lambda s: s.split(',')),
-        ('max.in.flight.requests.per.connection', 'max_in_flight_requests_per_connection', int),
-        ('request.timeout.ms', 'request_timeout_ms', int),
-    ]:
-        try:
-            consumer_kwargs[arg] = converter(config[config_key])
-        except KeyError:
-            pass
-
-    return consumer_kwargs

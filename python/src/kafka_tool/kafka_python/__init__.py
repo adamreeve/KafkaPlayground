@@ -4,6 +4,7 @@ import threading
 from typing import Dict, TYPE_CHECKING
 
 from kafka_tool.kafka_tasks import KafkaTasks
+from kafka_tool.kafka_python.admin import recreate_topics
 from kafka_tool.kafka_python.consumer_task import run_consumer_task
 
 if TYPE_CHECKING:
@@ -14,7 +15,7 @@ if TYPE_CHECKING:
 class KafkaPythonTasks(KafkaTasks):
     @staticmethod
     def recreate_topics(config: Dict[str, str], settings: ProducerConsumerSettings):
-        raise NotImplementedError()
+        recreate_topics(config, settings)
 
     @staticmethod
     def run_consumer_task(
